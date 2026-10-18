@@ -17,7 +17,8 @@
 */
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const PREFERRED_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"];
+const PREFERRED_MODELS = ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-3-flash"];
+const noThink = new Set(); // models that refused the "thinking" setting
 const TOTAL_BUDGET_MS = 9000; // Netlify's default function limit is about 10 seconds
 const MAX_MESSAGE_CHARS = 2500;
 const MAX_HISTORY_ITEMS = 10;
@@ -89,6 +90,14 @@ function buildContents(history, message, attachments) {
   return turns;
 }
 
+// Keep thinking short so answers come back inside Netlify's time limit.
+function thinkingFor(model) {
+  if (noThink.has(model)) return {};
+  if (/^gemini-3/.test(model)) return { thinkingConfig: { thinkingLevel: "low" } };
+  if (/^gemini-2\.5-flash/.test(model)) return { thinkingConfig: { thinkingBudget: 0 } };
+  return {};
+}
+
 async function callGemini(key, model, contents, deadline, opts) {
   const remaining = deadline - Date.now();
   if (remaining < 500) {
@@ -106,7 +115,7 @@ async function callGemini(key, model, contents, deadline, opts) {
         systemInstruction: { parts: [{ text: opts.json ? JSON_PROMPT : SYSTEM_PROMPT }] },
         contents,
         ...(opts.search ? { tools: [{ google_search: {} }] } : {}),
-        generationConfig: Object.assign({ temperature: opts.json ? 0.4 : 0.6, maxOutputTokens: opts.json ? 4096 : 2048 }, opts.json ? { responseMimeType: "application/json" } : {}, /^gemini-2\.5-flash/.test(model) ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
+        generationConfig: Object.assign({ temperature: opts.json ? 0.4 : 0.6, maxOutputTokens: opts.json ? 4096 : 2048 }, opts.json ? { responseMimeType: "application/json" } : {}, thinkingFor(model)),
       }),
       signal: controller.signal,
     });
@@ -142,7 +151,7 @@ async function discoverModel(key, deadline) {
     const names = (data.models || [])
       .filter((m) => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes("generateContent"))
       .map((m) => String(m.name || "").replace(/^models\//, ""))
-      .filter((n) => /^gemini-.*flash/.test(n) && !/(lite|image|tts|live|audio|embed|thinking|exp|vision)/.test(n));
+      .filter((n) => /^gemini-.*flash/.test(n) && !/(lite|image|tts|live|audio|embed|thinking|exp|vision|omni|preview)/.test(n));
     names.sort((a, b) => (a < b ? 1 : -1)); // newest-looking names first
     return names.slice(0, 2);
   } catch (_) {
@@ -205,6 +214,12 @@ async function generate(key, message, history, attachments, opts) {
     }
 
     console.error("Gemini error", model, status, cleanForLog(apiMessage, key));
+
+    if (status === 400 && /thinking/i.test(apiMessage || "") && !noThink.has(model)) {
+      noThink.add(model); // this model does not accept the setting: try the same model again without it
+      i--;
+      continue;
+    }
 
     if (status === 400 && /api key|API_KEY/i.test(apiMessage || "")) {
       return { error: [502, "BAD_KEY", "The AI key on the server is not accepted by Google. The site owner should create a new key and save it in Netlify."] };
