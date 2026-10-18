@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10264F">
+<meta name="description" content="Learnover AI - Smartness to Success. A study helper for students.">
+<title>Learnover AI - Smartness to Success</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%23F5B800'/%3E%3Cpath d='M24 12 6 21l18 9 18-9z' fill='%2310264F'/%3E%3Cpath d='M13 27v6c0 3 5 6 11 6s11-3 11-6v-6l-11 5.5z' fill='%2310264F'/%3E%3C/svg%3E">
+<style>
+:root{
+  --navy:#10264F; --navy-2:#1C3A73; --blue:#2B6CDF; --sky:#E6EFFF;
+  --gold:#F5B800; --gold-deep:#8A5F00; --gold-soft:#FFF3C7;
+  --mint:#0F8A66; --coral:#C93C30; --violet:#6240BC;
+  --ink:#14213D; --muted:#4F5D7C; --line:#D3DFF5; --bg:#F2F6FF; --card:#FFFFFF;
+  --font:"Trebuchet MS","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:17px;line-height:1.5;
+  display:flex;flex-direction:column;height:100vh;height:100dvh;-webkit-text-size-adjust:100%}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;color:inherit;background:none}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+
+/* Header */
+header{background:var(--navy);color:#fff;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;border-bottom:3px solid var(--gold)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{width:40px;height:40px;flex:none}
+.wm{font-weight:800;font-size:1.3rem;letter-spacing:.2px}
+.ai{background:var(--blue);color:#fff;font-weight:800;font-size:.85rem;padding:2px 8px;border-radius:8px;margin-left:6px;vertical-align:2px}
+#newChat{min-height:44px;padding:0 16px;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;font-weight:700;border:1px solid rgba(255,255,255,.35)}
+#newChat:active{background:rgba(255,255,255,.25)}
+
+/* Conversation area */
+#chat{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 8px;scroll-behavior:smooth}
+.wrap{max-width:720px;margin:0 auto}
+
+/* Welcome */
+.hero{background:var(--navy);color:#fff;border-radius:22px;padding:24px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;background:var(--navy-2)}
+.hero h1{font-size:2.05rem;line-height:1.12;color:var(--gold);font-weight:800;margin-bottom:10px;position:relative}
+.hero p{color:#DCE6FA;position:relative;max-width:34ch}
+.try{font-weight:800;color:var(--navy);margin:0 2px 10px}
+.ideas{display:grid;gap:10px}
+.idea{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--c,var(--blue));
+  border-radius:14px;padding:12px 14px;min-height:64px}
+.idea:active{background:var(--sky)}
+.idea b{display:block;color:var(--c,var(--blue));font-size:.92rem}
+.idea span{display:block;color:var(--ink)}
+.tip{margin-top:16px;color:var(--muted);font-size:.92rem;text-align:center}
+
+/* Messages */
+.msg{display:flex;margin:10px 0}
+.msg.user{justify-content:flex-end}
+.bubble{max-width:92%;padding:11px 14px;border-radius:18px;word-wrap:break-word;overflow-wrap:anywhere}
+.user .bubble{background:var(--navy);color:#fff;border-bottom-right-radius:6px;white-space:pre-wrap}
+.bot .bubble{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--gold);border-bottom-left-radius:6px}
+.bubble p{margin:0 0 .6em}.bubble p:last-child{margin-bottom:0}
+.bubble ul,.bubble ol{margin:.2em 0 .7em 1.3em}
+.bubble li{margin:.2em 0}
+.bubble h4{margin:.5em 0 .3em;color:var(--navy)}
+.bubble code{background:var(--sky);padding:1px 5px;border-radius:6px;font-size:.92em}
+.bubble pre{background:var(--navy);color:#fff;padding:10px 12px;border-radius:10px;overflow-x:auto;margin:.4em 0 .7em}
+.bubble pre code{background:none;padding:0;color:inherit}
+.err .bubble{background:#FFF1EF;border:1px solid #F1B7B0;border-left:5px solid var(--coral);color:#6B1A12}
+.err button{margin-top:10px;min-height:44px;padding:0 16px;border-radius:12px;background:var(--coral);color:#fff;font-weight:700}
+.dots{display:inline-flex;gap:6px;align-items:center;min-height:26px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--gold);animation:b 1s infinite ease-in-out}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+.dots em{font-style:normal;color:var(--muted);margin-left:6px;font-size:.92rem}
+@keyframes b{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-6px);opacity:1}}
+
+/* Composer */
+footer{flex:none;background:#fff;border-top:1px solid var(--line);padding:10px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+.row{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:flex-end}
+textarea{flex:1;min-height:52px;max-height:130px;resize:none;border:2px solid var(--line);border-radius:16px;padding:12px 14px;
+  font-family:inherit;font-size:1rem;line-height:1.35;color:var(--ink);background:#fff}
+textarea:focus{border-color:var(--blue);outline:none}
+#send{flex:none;min-width:84px;min-height:52px;border-radius:16px;background:var(--gold);color:var(--navy);font-weight:800;padding:0 18px}
+#send:active{background:#E0A800}
+#send:disabled{background:#E7E3D0;color:#8A8670;cursor:not-allowed}
+.small{max-width:720px;margin:6px auto 0;text-align:center;font-size:.8rem;color:var(--muted)}
+.hidden{display:none!important}
+noscript{display:block;padding:20px;text-align:center}
+@media (prefers-reduced-motion:reduce){#chat{scroll-behavior:auto}.dots i{animation:none}}
+@media (min-width:700px){.hero h1{font-size:2.5rem}.ideas{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 48 48" role="img" aria-label="Learnover AI logo">
+      <rect width="48" height="48" rx="14" fill="#F5B800"/>
+      <path d="M24 12 6 21l18 9 18-9z" fill="#10264F"/>
+      <path d="M13 27v6c0 3 5 6 11 6s11-3 11-6v-6l-11 5.5z" fill="#10264F"/>
+      <path d="M41 22v10" stroke="#10264F" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="wm">Learnover<span class="ai">AI</span></div>
+  </div>
+  <button id="newChat" type="button">New chat</button>
+</header>
+
+<main id="chat" aria-live="polite" aria-label="Conversation">
+  <noscript>Learnover AI needs JavaScript. Please turn it on in Chrome.</noscript>
+  <div class="wrap" id="log">
+    <section id="welcome">
+      <div class="hero">
+        <h1>Smartness to Success</h1>
+        <p>Ask Learnover AI about Maths, Science, English or your exam revision.</p>
+      </div>
+      <p class="try">Tap a question to start</p>
+      <div class="ideas">
+        <button class="idea" type="button" style="--c:#8A5F00" data-q="Explain fractions to a Grade 7 student with two simple examples.">
+          <b>Mathematics</b><span>Explain a Grade 7 Mathematics topic</span></button>
+        <button class="idea" type="button" style="--c:#2B6CDF" data-q="Help me understand photosynthesis step by step.">
+          <b>Science</b><span>Help me understand a Science lesson</span></button>
+        <button class="idea" type="button" style="--c:#0F8A66" data-q="Explain subject-verb agreement with easy examples.">
+          <b>English</b><span>Explain a difficult grammar rule</span></button>
+        <button class="idea" type="button" style="--c:#C93C30" data-q="Help me make a 5-day revision plan for my end of term exams.">
+          <b>Revision</b><span>Help me revise for an examination</span></button>
+        <button class="idea" type="button" style="--c:#6240BC" data-q="Explain how learning and assessment work in the Kenyan CBC curriculum.">
+          <b>Kenyan CBC</b><span>Explain a topic from the CBC curriculum</span></button>
+      </div>
+      <p class="tip">Or type your own question below.</p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="row">
+    <label for="input" class="hidden">Your question</label>
+    <textarea id="input" rows="1" maxlength="2000" placeholder="Type your question here" enterkeyhint="send"></textarea>
+    <button id="send" type="button">Send</button>
+  </div>
+  <p class="small">Learnover AI can make mistakes. Check important facts with your teacher or textbook.</p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var ENDPOINT = "/.netlify/functions/chat";
+  var MAX_HISTORY = 10;
+  var TIMEOUT_MS = 28000;
+
+  var chatEl = document.getElementById("chat");
+  var logEl = document.getElementById("log");
+  var welcomeEl = document.getElementById("welcome");
+  var inputEl = document.getElementById("input");
+  var sendBtn = document.getElementById("send");
+  var newBtn = document.getElementById("newChat");
+
+  var history = [];      // only successful turns: { role: "user"|"model", text }
+  var busy = false;
+  var chatId = 0;        // changes on "New chat" so old answers are ignored
+  var currentCtrl = null;
+
+  /* ---------- tiny, safe text formatter ---------- */
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function inline(s) {
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+    return s;
+  }
+  function format(src) {
+    var lines = src.replace(/\r/g, "").split("\n"), out = [], list = null, code = null, m, i, line;
+    function closeList() { if (list) { out.push("</" + list + ">"); list = null; } }
+    for (i = 0; i < lines.length; i++) {
+      line = lines[i];
+      if (code !== null) {
+        if (/^```/.test(line)) { out.push("<pre><code>" + esc(code.join("\n")) + "</code></pre>"); code = null; }
+        else code.push(line);
+        continue;
+      }
+      if (/^```/.test(line)) { closeList(); code = []; continue; }
+      if ((m = line.match(/^\s*[-*\u2022]\s+(.*)/))) {
+        if (list !== "ul") { closeList(); out.push("<ul>"); list = "ul"; }
+        out.push("<li>" + inline(m[1]) + "</li>"); continue;
+      }
+      if ((m = line.match(/^\s*\d+[.)]\s+(.*)/))) {
+        if (list !== "ol") { closeList(); out.push("<ol>"); list = "ol"; }
+        out.push("<li>" + inline(m[1]) + "</li>"); continue;
+      }
+      closeList();
+      if ((m = line.match(/^#{1,4}\s+(.*)/))) { out.push("<h4>" + inline(m[1]) + "</h4>"); continue; }
+      if (!line.trim()) continue;
+      out.push("<p>" + inline(line) + "</p>");
+    }
+    if (code !== null) out.push("<pre><code>" + esc(code.join("\n")) + "</code></pre>");
+    closeList();
+    return out.join("");
+  }
+
+  /* ---------- screen helpers ---------- */
+  function scrollDown() { chatEl.scrollTop = chatEl.scrollHeight; }
+
+  function addMessage(kind, content, asHtml) {
+    var row = document.createElement("div");
+    row.className = "msg " + kind;
+    var b = document.createElement("div");
+    b.className = "bubble";
+    if (asHtml) b.innerHTML = content; else b.textContent = content;
+    row.appendChild(b);
+    logEl.appendChild(row);
+    scrollDown();
+    return row;
+  }
+
+  function addLoader() {
+    return addMessage("bot", '<span class="dots" role="status"><i></i><i></i><i></i><em>Thinking...</em></span>', true);
+  }
+
+  function addError(text, retryText) {
+    var row = addMessage("bot err", "", false);
+    var b = row.firstChild;
+    var p = document.createElement("p");
+    p.textContent = text;
+    b.appendChild(p);
+    if (retryText) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = "Try again";
+      btn.addEventListener("click", function () { row.remove(); send(retryText); });
+      b.appendChild(btn);
+    }
+    scrollDown();
+  }
+
+  function setBusy(v) {
+    busy = v;
+    sendBtn.disabled = v;
+    sendBtn.textContent = v ? "Wait..." : "Send";
+  }
+
+  function resizeInput() {
+    inputEl.style.height = "auto";
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 130) + "px";
+  }
+
+  function showChatView() { welcomeEl.classList.add("hidden"); }
+
+  /* ---------- sending ---------- */
+  async function send(raw) {
+    var text = (raw || "").trim();
+    if (busy) return;
+    if (!text) { inputEl.focus(); inputEl.placeholder = "Type a question first"; return; }
+
+    var myChat = chatId;
+    showChatView();
+    addMessage("user", text, false);
+    inputEl.value = ""; resizeInput();
+    setBusy(true);
+    var loader = addLoader();
+
+    var ctrl = new AbortController();
+    currentCtrl = ctrl;
+    var timer = setTimeout(function () { ctrl.abort(); }, TIMEOUT_MS);
+
+    var result = null, problem = null;
+    try {
+      var res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text, history: history.slice(-MAX_HISTORY) }),
+        signal: ctrl.signal
+      });
+      var raw2 = await res.text(), data = null;
+      try { data = JSON.parse(raw2); } catch (e) { data = null; }
+
+      if (res.ok && data && typeof data.reply === "string" && data.reply) {
+        result = data.reply;
+      } else if (data && data.error && data.error.message) {
+        problem = data.error.message;
+      } else if (res.status === 404) {
+        problem = "The chat function was not found on this website. It has not been deployed yet. Open the README and follow the step called Check the function.";
+      } else {
+        problem = "The AI service sent an unexpected answer (code " + res.status + "). Please try again.";
+      }
+    } catch (err) {
+      if (err && err.name === "AbortError") problem = "The answer took too long. Try a shorter question.";
+      else problem = "Could not reach Learnover AI. Check your internet connection and try again.";
+    } finally {
+      clearTimeout(timer);
+    }
+
+    if (myChat !== chatId) return; // the student started a new chat meanwhile
+    loader.remove();
+    setBusy(false);
+
+    if (result) {
+      history.push({ role: "user", text: text });
+      history.push({ role: "model", text: result });
+      addMessage("bot", format(result), true);
+    } else {
+      addError(problem, text);
+    }
+    inputEl.focus();
+  }
+
+  function newChat() {
+    chatId++;
+    if (currentCtrl) { try { currentCtrl.abort(); } catch (e) {} }
+    history = [];
+    setBusy(false);
+    var kids = logEl.querySelectorAll(".msg");
+    for (var i = 0; i < kids.length; i++) kids[i].remove();
+    welcomeEl.classList.remove("hidden");
+    inputEl.value = ""; inputEl.placeholder = "Type your question here"; resizeInput();
+    chatEl.scrollTop = 0;
+  }
+
+  /* ---------- events ---------- */
+  sendBtn.addEventListener("click", function () { send(inputEl.value); });
+  newBtn.addEventListener("click", newChat);
+  inputEl.addEventListener("input", resizeInput);
+  inputEl.addEventListener("keydown", function (e) {
+    // On a computer, Enter sends. On a phone, Enter makes a new line.
+    var desktop = window.matchMedia && window.matchMedia("(pointer:fine)").matches;
+    if (e.key === "Enter" && !e.shiftKey && desktop) { e.preventDefault(); send(inputEl.value); }
+  });
+  var ideas = document.querySelectorAll(".idea");
+  for (var i = 0; i < ideas.length; i++) {
+    ideas[i].addEventListener("click", function () { send(this.getAttribute("data-q")); });
+  }
+})();
+</script>
+</body>
+  </html>
