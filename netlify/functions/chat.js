@@ -17,7 +17,7 @@
 */
 
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
-const PREFERRED_MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"];
+const PREFERRED_MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"];
 const TOTAL_BUDGET_MS = 9000; // Netlify's default function limit is about 10 seconds
 const MAX_MESSAGE_CHARS = 2500;
 const MAX_HISTORY_ITEMS = 10;
