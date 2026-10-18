@@ -7,8 +7,10 @@
   Secret key:        Netlify environment variable GEMINI_API_KEY
   Optional:          GEMINI_MODEL  (force one model name, e.g. gemini-2.5-flash)
 
-  POST  { message: "text", history: [{ role: "user" | "model", text: "..." }] }
-        -> 200 { reply: "..." }   or   { error: { code, message } }
+  POST  { mode, message, history, options }
+        mode = chat | quiz | flashcards | revise | research | solve | write   (default: chat)
+        -> 200 { reply: "..." }  or  { quiz: {...} }  or  { flashcards: {...} }
+        -> or { error: { code, message } }
 
   GET   (no parameters) -> tells you if the function is alive and if the key exists.
   GET   ?test=1         -> also makes ONE tiny real request to Gemini to prove the key works.
@@ -17,9 +19,11 @@
 const API_BASE = "https://generativelanguage.googleapis.com/v1beta";
 const PREFERRED_MODELS = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash"];
 const TOTAL_BUDGET_MS = 9000; // Netlify's default function limit is about 10 seconds
-const MAX_MESSAGE_CHARS = 2000;
+const MAX_MESSAGE_CHARS = 2500;
 const MAX_HISTORY_ITEMS = 10;
 const MAX_HISTORY_CHARS = 4000;
+const MAX_ATTACH_CHARS = 5000000; // total size of attached files (base64 text)
+const OK_MIME = /^(image\/(jpeg|png|webp|heic|heif)|application\/pdf|text\/(plain|csv|markdown))$/;
 
 let workingModel = null; // remembered between requests while the function stays warm
 
@@ -34,6 +38,8 @@ const SYSTEM_PROMPT = [
   "Help students learn; do not help with cheating in an exam that is in progress.",
   "If you are not sure about something, say so and suggest checking with a teacher or textbook.",
 ].join(" ");
+
+const JSON_PROMPT = "You are a careful Kenyan CBC teacher. Reply with valid JSON only. No markdown, no extra words.";
 
 function respond(statusCode, body) {
   return {
@@ -57,7 +63,7 @@ function cleanForLog(text, key) {
 }
 
 // Make a safe list of earlier turns for Gemini.
-function buildContents(history, message) {
+function buildContents(history, message, attachments) {
   const turns = [];
   if (Array.isArray(history)) {
     for (const item of history.slice(-MAX_HISTORY_ITEMS)) {
@@ -69,11 +75,21 @@ function buildContents(history, message) {
     }
   }
   while (turns.length && turns[0].role !== "user") turns.shift(); // Gemini wants "user" first
-  turns.push({ role: "user", parts: [{ text: message }] });
+  const parts = [{ text: message }];
+  let total = 0;
+  if (Array.isArray(attachments)) {
+    for (const a of attachments.slice(0, 3)) {
+      if (!a || typeof a.data !== "string" || !OK_MIME.test(a.mime || "")) continue;
+      total += a.data.length;
+      if (total > MAX_ATTACH_CHARS) break;
+      parts.push({ inlineData: { mimeType: a.mime, data: a.data } });
+    }
+  }
+  turns.push({ role: "user", parts });
   return turns;
 }
 
-async function callGemini(key, model, contents, deadline) {
+async function callGemini(key, model, contents, deadline, opts) {
   const remaining = deadline - Date.now();
   if (remaining < 500) {
     const e = new Error("timeout");
@@ -87,9 +103,10 @@ async function callGemini(key, model, contents, deadline) {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": key },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        systemInstruction: { parts: [{ text: opts.json ? JSON_PROMPT : SYSTEM_PROMPT }] },
         contents,
-        generationConfig: { temperature: 0.6, maxOutputTokens: 2048 },
+        ...(opts.search ? { tools: [{ google_search: {} }] } : {}),
+        generationConfig: Object.assign({ temperature: opts.json ? 0.4 : 0.6, maxOutputTokens: opts.json ? 4096 : 2048 }, opts.json ? { responseMimeType: "application/json" } : {}),
       }),
       signal: controller.signal,
     });
@@ -141,13 +158,16 @@ function readReply(data) {
   const text = Array.isArray(parts)
     ? parts.map((p) => (p && typeof p.text === "string" ? p.text : "")).join("").trim()
     : "";
-  return { text, finishReason: cand && cand.finishReason, blockReason: data && data.promptFeedback && data.promptFeedback.blockReason };
+  const chunks = (cand && cand.groundingMetadata && cand.groundingMetadata.groundingChunks) || [];
+  const sources = chunks.map((c) => c && c.web && { title: String(c.web.title || c.web.uri || "").slice(0, 120), url: String(c.web.uri || "") }).filter((x) => x && /^https?:\/\//.test(x.url)).slice(0, 6);
+  return { text, sources, finishReason: cand && cand.finishReason, blockReason: data && data.promptFeedback && data.promptFeedback.blockReason };
 }
 
 // Shared logic: try models until one answers. Returns { reply, model } or { error }.
-async function generate(key, message, history) {
+async function generate(key, message, history, attachments, opts) {
+  opts = opts || {};
   const deadline = Date.now() + TOTAL_BUDGET_MS;
-  const contents = buildContents(history, message);
+  const contents = buildContents(history, message, attachments);
 
   let candidates = [];
   if (process.env.GEMINI_MODEL) candidates.push(process.env.GEMINI_MODEL.trim());
@@ -162,7 +182,7 @@ async function generate(key, message, history) {
     const model = candidates[i];
     let result;
     try {
-      result = await callGemini(key, model, contents, deadline);
+      result = await callGemini(key, model, contents, deadline, opts);
     } catch (err) {
       if (err.kind === "TIMEOUT") return { error: [504, "TIMEOUT", "The AI took too long to answer. Please try a shorter question."] };
       return { error: [502, "NETWORK", "Learnover AI could not reach the AI service. Please try again in a moment."] };
@@ -175,7 +195,7 @@ async function generate(key, message, history) {
       const out = readReply(data);
       if (out.text) {
         workingModel = model;
-        return { reply: out.text, model };
+        return { reply: out.text, model, sources: out.sources };
       }
       if (out.blockReason || out.finishReason === "SAFETY") {
         return { error: [422, "BLOCKED", "The AI could not answer that question. Try asking it in a different way."] };
@@ -255,8 +275,9 @@ exports.handler = async (event) => {
   }
 
   try {
-    const r = await generate(key, message, body.history);
-    if (r.reply) return respond(200, { reply: r.reply });
+    const mode = body.mode === "research" || body.mode === "json" ? body.mode : "chat";
+    const r = await generate(key, message, body.history, body.attachments, { search: mode === "research", json: mode === "json" });
+    if (r.reply) return respond(200, { reply: r.reply, sources: r.sources || [] });
     return fail(r.error[0], r.error[1], r.error[2]);
   } catch (err) {
     console.error("Unexpected function error", cleanForLog(err && err.message, key));
