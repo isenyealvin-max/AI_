@@ -1,0 +1,17 @@
+# Learnover AI - Netlify settings
+
+[build]
+  # The website files (index.html) are in the main folder of the repository.
+  publish = "."
+  # Netlify looks here for server-side functions. chat.js becomes /.netlify/functions/chat
+  functions = "netlify/functions"
+  # No build command is needed. There is nothing to compile.
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
