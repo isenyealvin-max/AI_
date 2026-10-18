@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4c400"><title>Learnover AI - Smartness to Success</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fffdf2;color:#202020;line-height:1.55}
+header{background:#f4c400;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top,0px));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px #0002}
+.logo{font-size:24px;font-weight:800}.logo small{display:block;font-size:11px;font-weight:500}
+.menu-btn{border:0;background:#fff7c7;border-radius:12px;padding:9px 13px;font-size:22px;font-weight:800;cursor:pointer}
+main{max-width:860px;margin:auto;padding:16px 14px 110px}
+.page{display:none}.page.active{display:block}
+.hero{background:#202020;color:#fff;border-radius:22px;padding:24px 20px;margin-bottom:18px}.hero h1{margin:0 0 8px;font-size:27px}.hero p{color:#eee;margin:0 0 10px}
+.tag{display:inline-block;background:#fff1a8;color:#202020;border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;margin:3px 3px 3px 0}
+.btn{display:inline-block;background:#f4c400;color:#171717;border:0;border-radius:11px;padding:12px 16px;font-weight:700;font-size:15px;cursor:pointer;min-height:46px}
+.btn.secondary{background:#eee}.btn.full{width:100%}.btn:disabled{opacity:.5}
+h2{margin:18px 0 10px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;background:#fff;border:1px solid #eee;border-radius:17px;padding:16px;box-shadow:0 3px 12px #00000012;cursor:pointer;text-align:left;font:inherit;color:inherit}
+.card:active{background:#fff9d8}.icon{font-size:28px}.card h3{margin:8px 0 5px;font-size:17px}.card p{margin:0;color:#666;font-size:14px}
+.note{background:#fff;border-radius:16px;padding:16px;border:1px solid #eee;margin-bottom:12px}
+label{display:block;font-weight:700;font-size:14px;margin:10px 0 4px}
+select,input[type=text],textarea{width:100%;padding:12px;border:1px solid #ddd;border-radius:11px;font:inherit;background:#fff;color:#202020}
+select:focus,input:focus,textarea:focus{outline:3px solid #f4c40088;border-color:#c99a00}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pagehead{display:flex;align-items:center;gap:10px;margin-bottom:10px}.pagehead h2{margin:0;font-size:21px}
+.small{font-size:13px;color:#666}
+/* chat */
+.msg{display:flex;margin:10px 0}.msg.user{justify-content:flex-end}
+.bubble{max-width:93%;padding:11px 14px;border-radius:18px;overflow-wrap:anywhere}
+.user .bubble{background:#202020;color:#fff;border-bottom-right-radius:5px;white-space:pre-wrap}
+.bot .bubble{background:#fff;border:1px solid #eee;border-left:6px solid #f4c400;border-bottom-left-radius:5px;box-shadow:0 2px 8px #0000000d}
+.bubble p{margin:0 0 .6em}.bubble p:last-child{margin:0}.bubble ul,.bubble ol{margin:.2em 0 .7em 1.3em;padding:0}.bubble h4{margin:.5em 0 .3em}
+.bubble code{background:#fff1a8;padding:1px 5px;border-radius:6px}.bubble pre{background:#202020;color:#fff;padding:10px;border-radius:10px;overflow-x:auto}
+.err .bubble{background:#fff1ef;border-color:#c93c30;color:#6b1a12}
+.tools{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}.tools button{border:1px solid #e5d27a;background:#fffdf0;border-radius:10px;padding:8px 12px;min-height:40px;font-weight:700;cursor:pointer}
+.src{margin-top:10px;font-size:13px}.src a{display:block;color:#7a5a00;margin:3px 0;word-break:break-all}
+.dots i{display:inline-block;width:9px;height:9px;margin-right:6px;border-radius:50%;background:#f4c400;animation:b 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{transform:translateY(-6px)}}
+.composer{position:sticky;bottom:64px;background:#fffdf2;padding:8px 0 4px}
+.cbar{display:flex;gap:8px;align-items:flex-end}.cbar textarea{flex:1;min-height:50px;max-height:120px;resize:none}
+.ibtn{flex:none;width:50px;height:50px;border:1px solid #e5d27a;background:#fff7c7;border-radius:14px;font-size:21px;cursor:pointer}
+.ibtn.on{background:#c93c30;color:#fff}.send{flex:none;min-width:76px;height:50px;border:0;border-radius:14px;background:#f4c400;font-weight:800;font-size:15px;cursor:pointer}.send:disabled{opacity:.5}
+.chip{display:inline-flex;gap:8px;align-items:center;background:#fff1a8;border-radius:20px;padding:5px 6px 5px 12px;margin:0 0 6px;font-size:13px;font-weight:700}.chip button{border:0;background:#fff;border-radius:50%;width:26px;height:26px;cursor:pointer}
+.ideas{display:grid;gap:8px;margin:10px 0}.idea{background:#fff;border:1px solid #eee;border-left:6px solid #f4c400;border-radius:13px;padding:12px;text-align:left;font:inherit;cursor:pointer;min-height:48px}
+/* quiz + cards */
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid #eee;border-radius:13px;padding:13px;margin:8px 0;font:inherit;cursor:pointer;min-height:48px}
+.opt.good{border-color:#0f8a66;background:#e8f8f1}.opt.bad{border-color:#c93c30;background:#fff1ef}
+.bar{height:10px;background:#eee;border-radius:20px;overflow:hidden;margin:6px 0 14px}.bar span{display:block;height:100%;background:#f4c400}
+.flash{min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:700;background:#fff;border:2px solid #f4c400;border-radius:18px;padding:20px;cursor:pointer;box-shadow:0 3px 12px #00000012}.flash.back{background:#202020;color:#fff}
+/* nav + menu */
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;padding:6px 2px calc(6px + env(safe-area-inset-bottom,0px));z-index:10}
+nav button{border:0;background:none;color:#444;font-size:11px;cursor:pointer;min-width:56px;min-height:48px;border-radius:10px}nav b{display:block;font-size:20px}nav button.on{background:#fff1a8;color:#202020;font-weight:800}
+.menu-backdrop{display:none;position:fixed;inset:0;background:#0006;z-index:29}.menu-backdrop.open{display:block}
+.menu-panel{position:fixed;top:0;right:-360px;width:min(350px,92vw);height:100%;background:#fff;z-index:30;box-shadow:-8px 0 30px #0003;transition:right .25s;padding:20px 16px;overflow:auto}.menu-panel.open{right:0}
+.menu-item{width:100%;display:flex;gap:12px;border:1px solid #eee;background:#fff;border-radius:14px;padding:14px;margin:8px 0;font-weight:700;font-size:15px;cursor:pointer;text-align:left}.menu-item:active{background:#fff9d8}
+.back{background:#eee;border:0;border-radius:10px;padding:10px 13px;font-weight:700;cursor:pointer}
+.footer{text-align:center;color:#777;font-size:12px;margin-top:22px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){.dots i{animation:none}.menu-panel{transition:none}}
+</style></head><body>
+<header><div class="logo">Learnover AI<small>Smartness to Success</small></div><button class="menu-btn" aria-label="Open menu" id="menuBtn">☰</button></header>
+<div id="bd" class="menu-backdrop"></div>
+<aside id="menu" class="menu-panel" aria-label="Learnover menu"><button class="back" id="menuClose">← Close</button><h2>⚙️ Learnover Options</h2>
+<button class="menu-item" data-go="chat">💬 Ask Learnover AI</button><button class="menu-item" data-go="quiz">🧠 Quiz me</button><button class="menu-item" data-go="revise">📚 Revise a topic</button><button class="menu-item" data-go="research">🔎 Research with sources</button><button class="menu-item" id="newChatBtn">🗑️ Start a new chat</button><button class="menu-item" id="checkBtn">🩺 Check AI connection</button>
+<p class="small" id="checkOut"></p><p class="small">Coming next: image creator, image editing, voice messages, sign in and premium.</p></aside>
+<main>
+<section id="home" class="page active"><div class="hero"><h1>Hi, what do you want to learn today?</h1><p>Ask questions, take quizzes, revise topics and research with sources.</p><span class="tag">Grade 7</span><span class="tag">CBC learning areas</span><span class="tag">Talk • Type • Attach</span><br><button class="btn" data-go="chat" style="margin-top:8px">Ask Learnover AI</button></div>
+<h2>Explore</h2><div class="grid">
+<button class="card" data-go="chat"><div class="icon">💬</div><h3>Ask AI</h3><p>Type, talk, or attach a photo or file.</p></button>
+<button class="card" data-go="quiz"><div class="icon">🧠</div><h3>Quizzes</h3><p>Practise with marked questions on any topic.</p></button>
+<button class="card" data-go="revise"><div class="icon">📚</div><h3>Revise</h3><p>Get revision notes and flashcards.</p></button>
+<button class="card" data-go="research"><div class="icon">🔎</div><h3>Research</h3><p>Search the web and see the sources.</p></button>
+<button class="card" id="cardPhoto"><div class="icon">📷</div><h3>Understand a photo</h3><p>Snap a question or diagram and ask.</p></button>
+<button class="card" id="cardTalk"><div class="icon">🎤</div><h3>Talk to AI</h3><p>Speak and it types your question.</p></button></div>
+<div class="footer">© Learnover AI • Smartness to Success</div></section>
+<section id="chat" class="page"></section>
+<section id="research" class="page"></section>
+<section id="quiz" class="page"><div class="pagehead"><h2>🧠 Quiz me</h2></div><div class="note" id="quizSetup"><div class="row2"><div><label for="qg">Grade</label><select id="qg"></select></div><div><label for="qs">Learning area</label><select id="qs"></select></div></div><label for="qt">Topic</label><input type="text" id="qt" maxlength="120" placeholder="e.g. Fractions"><div class="row2"><div><label for="qn">Questions</label><select id="qn"><option>5</option><option>10</option></select></div><div><label for="ql">Level</label><select id="ql"><option>Easy</option><option selected>Medium</option><option>Hard</option></select></div></div><br><button class="btn full" id="qgo">Start quiz</button><p class="small" id="qmsg"></p></div><div id="quizBox"></div></section>
+<section id="revise" class="page"><div class="pagehead"><h2>📚 Revise a topic</h2></div><div class="note"><div class="row2"><div><label for="rg">Grade</label><select id="rg"></select></div><div><label for="rs">Learning area</label><select id="rs"></select></div></div><label for="rt">Topic</label><input type="text" id="rt" maxlength="120" placeholder="e.g. Photosynthesis"><br><button class="btn full" id="rnotes">Get revision notes</button><button class="btn secondary full" id="rcards" style="margin-top:8px">Make flashcards</button><p class="small" id="rmsg"></p></div><div id="reviseBox"></div></section>
+</main>
+<nav id="nav"><button data-go="home"><b>🏠</b>Home</button><button data-go="chat"><b>💬</b>Ask</button><button data-go="quiz"><b>🧠</b>Quiz</button><button data-go="revise"><b>📚</b>Revise</button><button data-go="research"><b>🔎</b>Research</button></nav>
+<input type="file" id="fileIn" accept="image/*,.pdf,.txt,.csv,.md" hidden>
+<script>
+(function(){"use strict";
+var API="/.netlify/functions/chat",$=function(i){return document.getElementById(i)};
+var AREAS=["Mathematics","English","Kiswahili","Integrated Science","Social Studies","Agriculture and Nutrition","Pre-Technical Studies","Creative Arts and Sports","Religious Education"];
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function inl(s){s=esc(s);return s.replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>").replace(/(^|[\s(])\*([^*\s][^*]*)\*/g,"$1<em>$2</em>")}
+function fmt(src){var L=src.replace(/\r/g,"").split("\n"),o=[],ls=null,cd=null,m;function cl(){if(ls){o.push("</"+ls+">");ls=null}}
+L.forEach(function(l){if(cd!==null){if(/^```/.test(l)){o.push("<pre><code>"+esc(cd.join("\n"))+"</code></pre>");cd=null}else cd.push(l);return}
+if(/^```/.test(l)){cl();cd=[];return}
+if((m=l.match(/^\s*[-*\u2022]\s+(.*)/))){if(ls!=="ul"){cl();o.push("<ul>");ls="ul"}o.push("<li>"+inl(m[1])+"</li>");return}
+if((m=l.match(/^\s*\d+[.)]\s+(.*)/))){if(ls!=="ol"){cl();o.push("<ol>");ls="ol"}o.push("<li>"+inl(m[1])+"</li>");return}
+cl();if((m=l.match(/^#{1,4}\s+(.*)/))){o.push("<h4>"+inl(m[1])+"</h4>");return}if(l.trim())o.push("<p>"+inl(l)+"</p>")});
+if(cd!==null)o.push("<pre><code>"+esc(cd.join("\n"))+"</code></pre>");cl();return o.join("")}
+/* ---- call the secure function ---- */
+async function call(p){var c=new AbortController(),t=setTimeout(function(){c.abort()},28000),r,d=null;
+try{r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p),signal:c.signal});var x=await r.text();try{d=JSON.parse(x)}catch(e){}}
+catch(e){throw new Error(e&&e.name==="AbortError"?"The answer took too long. Try a shorter question.":"Could not reach Learnover AI. Check your internet and try again.")}
+finally{clearTimeout(t)}
+if(r.ok&&d&&d.reply)return d;
+if(d&&d.error&&d.error.message)throw new Error(d.error.message);
+if(r.status===404)throw new Error("The chat function was not found. Check that netlify/functions/chat.js is in GitHub and deployed.");
+throw new Error("Unexpected answer from the AI service (code "+r.status+"). Try again.")}
+/* ---- attachments ---- */
+var pendingTarget=null;
+function readFile(f){return new Promise(function(ok,no){var r=new FileReader();r.onerror=function(){no(new Error("Could not read that file."))};
+if(/^image\//.test(f.type)){r.onload=function(){var im=new Image();im.onerror=function(){no(new Error("That image type is not supported. Try a JPG or PNG."))};im.onload=function(){var s=Math.min(1,1280/Math.max(im.width,im.height)),cv=document.createElement("canvas");cv.width=Math.round(im.width*s);cv.height=Math.round(im.height*s);cv.getContext("2d").drawImage(im,0,0,cv.width,cv.height);ok({name:f.name||"photo.jpg",mime:"image/jpeg",data:cv.toDataURL("image/jpeg",.82).split(",")[1]})};im.src=r.result};r.readAsDataURL(f)}
+else{var mime=f.type||(/\.pdf$/i.test(f.name)?"application/pdf":/\.csv$/i.test(f.name)?"text/csv":/\.md$/i.test(f.name)?"text/markdown":"text/plain");
+if(!/^(application\/pdf|text\/(plain|csv|markdown))$/.test(mime))return no(new Error("Use a photo, PDF, or text file."));
+if(f.size>3000000)return no(new Error("That file is too big. Keep it under 3 MB."));
+r.onload=function(){ok({name:f.name,mime:mime,data:String(r.result).split(",")[1]})};r.readAsDataURL(f)}})}
+$("fileIn").addEventListener("change",async function(){var f=this.files[0];this.value="";if(!f||!pendingTarget)return;var T=pendingTarget;try{T.setAtt(await readFile(f))}catch(e){T.note(e.message)}});
+/* ---- chat engine (used by Ask and Research pages) ---- */
+function Chat(root,mode,cfg){
+root.innerHTML='<div class="pagehead"><h2>'+cfg.title+'</h2></div><div class="note small">'+cfg.hint+'</div><div class="ideas"></div><div class="log" aria-live="polite"></div><div class="composer"><div class="chipbox"></div><div class="cbar"><button class="ibtn att" aria-label="Attach photo or file" type="button">📎</button><button class="ibtn mic" aria-label="Speak your question" type="button">🎤</button><textarea rows="1" maxlength="2000" placeholder="'+cfg.ph+'" aria-label="Your question"></textarea><button class="send" type="button">Send</button></div><p class="small msgline"></p></div>';
+var log=root.querySelector(".log"),ta=root.querySelector("textarea"),sb=root.querySelector(".send"),mic=root.querySelector(".mic"),line=root.querySelector(".msgline"),chips=root.querySelector(".chipbox"),ideas=root.querySelector(".ideas");
+var hist=[],att=null,busy=false,gen=0,rec=null,self={};
+cfg.ideas.forEach(function(q){var b=document.createElement("button");b.className="idea";b.type="button";b.textContent=q;b.onclick=function(){send(q)};ideas.appendChild(b)});
+function down(){window.scrollTo(0,document.body.scrollHeight)}
+function add(k,h,html){var r=document.createElement("div");r.className="msg "+k;var b=document.createElement("div");b.className="bubble";if(html)b.innerHTML=h;else b.textContent=h;r.appendChild(b);log.appendChild(r);down();return r}
+self.note=function(t){line.textContent=t};
+self.setAtt=function(a){att=a;line.textContent="";chips.innerHTML="";var c=document.createElement("span");c.className="chip";c.textContent="📎 "+a.name+" ";var x=document.createElement("button");x.type="button";x.textContent="✕";x.setAttribute("aria-label","Remove attachment");x.onclick=function(){att=null;chips.innerHTML=""};c.appendChild(x);chips.appendChild(c)};
+self.ask=function(t){send(t)};
+self.reset=function(){gen++;hist=[];att=null;chips.innerHTML="";log.innerHTML="";ideas.style.display="";busy=false;sb.disabled=false;sb.textContent="Send";line.textContent="";if(window.speechSynthesis)speechSynthesis.cancel()};
+self.mic=function(){toggleMic()};self.attach=function(){root.querySelector(".att").click()};
+root.querySelector(".att").onclick=function(){pendingTarget=self;$("fileIn").click()};
+function toggleMic(){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){line.textContent="Voice typing needs Chrome. You can still type your question.";return}
+if(rec){rec.stop();return}rec=new SR();rec.lang=navigator.language||"en-US";rec.interimResults=true;rec.continuous=false;var base=ta.value?ta.value+" ":"";
+rec.onresult=function(e){var s="";for(var i=0;i<e.results.length;i++)s+=e.results[i][0].transcript;ta.value=(base+s).slice(0,2000)};
+rec.onerror=function(e){line.textContent=e.error==="not-allowed"?"Microphone is blocked. Allow the microphone for this site in Chrome.":"Could not hear you. Try again."};
+rec.onend=function(){rec=null;mic.classList.remove("on");mic.textContent="🎤";if(ta.value.trim())line.textContent="Check the words, then tap Send."};
+try{rec.start();mic.classList.add("on");mic.textContent="⏹";line.textContent="Listening... speak now."}catch(e){rec=null}}
+mic.onclick=toggleMic;
+function speak(btn,text){if(!window.speechSynthesis){btn.textContent="Not supported";return}if(speechSynthesis.speaking){speechSynthesis.cancel();btn.textContent="🔊 Read aloud";return}
+var u=new SpeechSynthesisUtterance(text.replace(/[*#`_]/g,""));u.lang=navigator.language||"en-US";u.onend=function(){btn.textContent="🔊 Read aloud"};btn.textContent="⏹ Stop";speechSynthesis.speak(u)}
+async function send(raw){var text=(raw||"").trim();if(busy)return;if(!text){line.textContent="Type or speak a question first.";ta.focus();return}
+var my=gen,a=att;att=null;chips.innerHTML="";line.textContent="";ideas.style.display="none";add("user",a?text+"\n📎 "+a.name:text);ta.value="";ta.style.height="auto";busy=true;sb.disabled=true;sb.textContent="Wait...";
+var ld=add("bot",'<span class="dots"><i></i><i></i><i></i></span> Thinking...',true),res=null,bad=null;
+try{res=await call({mode:mode,message:text,history:hist.slice(-10),attachments:a?[{mime:a.mime,data:a.data}]:[]})}catch(e){bad=e.message}
+if(my!==gen)return;ld.remove();busy=false;sb.disabled=false;sb.textContent="Send";
+if(res){hist.push({role:"user",text:text},{role:"model",text:res.reply});var r=add("bot",fmt(res.reply),true),b=r.firstChild;
+if(res.sources&&res.sources.length){var s=document.createElement("div");s.className="src";s.innerHTML="<b>Sources</b>";res.sources.forEach(function(x){var l=document.createElement("a");l.href=x.url;l.target="_blank";l.rel="noopener noreferrer";l.textContent=x.title||x.url;s.appendChild(l)});b.appendChild(s)}
+var tl=document.createElement("div");tl.className="tools";var sp=document.createElement("button");sp.type="button";sp.textContent="🔊 Read aloud";sp.onclick=function(){speak(sp,res.reply)};tl.appendChild(sp);b.appendChild(tl)}
+else{var e=add("bot err","",false),bb=e.firstChild,p=document.createElement("p");p.textContent=bad;bb.appendChild(p);var tl2=document.createElement("div");tl2.className="tools";var rt=document.createElement("button");rt.type="button";rt.textContent="Try again";rt.onclick=function(){e.remove();send(text)};tl2.appendChild(rt);bb.appendChild(tl2);down()}}
+sb.onclick=function(){send(ta.value)};
+ta.addEventListener("input",function(){ta.style.height="auto";ta.style.height=Math.min(ta.scrollHeight,120)+"px"});
+ta.addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey&&matchMedia("(pointer:fine)").matches){e.preventDefault();send(ta.value)}});
+return self}
+var chat=Chat($("chat"),"chat",{title:"💬 Ask Learnover AI",hint:"Type, tap 🎤 to speak, or tap 📎 to attach a photo, PDF or text file.",ph:"Type your question here",ideas:["Explain fractions to a Grade 7 student with two simple examples.","Help me understand photosynthesis step by step.","Explain subject-verb agreement with easy examples.","Help me make a 5-day revision plan for my end of term exams.","Explain how learning and assessment work in the Kenyan CBC curriculum."]});
+var research=Chat($("research"),"research",{title:"🔎 Research with sources",hint:"Learnover AI searches the web and shows where the information came from. Always check important facts.",ph:"What do you want to research?",ideas:["What are the main causes of soil erosion in Kenya?","Find recent facts about renewable energy in Kenya.","Explain how the Kenyan CBC grading levels work."]});
+/* ---- pages, menu, nav ---- */
+function show(n){document.querySelectorAll(".page").forEach(function(p){p.classList.toggle("active",p.id===n)});document.querySelectorAll("#nav button").forEach(function(b){b.classList.toggle("on",b.dataset.go===n)});menu(false);window.scrollTo(0,0)}
+function menu(o){$("menu").classList.toggle("open",o);$("bd").classList.toggle("open",o)}
+document.addEventListener("click",function(e){var g=e.target.closest("[data-go]");if(g)show(g.dataset.go)});
+$("menuBtn").onclick=function(){menu(true)};$("menuClose").onclick=function(){menu(false)};$("bd").onclick=function(){menu(false)};
+$("newChatBtn").onclick=function(){chat.reset();research.reset();show("chat")};
+$("cardPhoto").onclick=function(){show("chat");chat.attach()};$("cardTalk").onclick=function(){show("chat");chat.mic()};
+$("checkBtn").onclick=async function(){var o=$("checkOut");o.textContent="Checking...";try{var r=await fetch(API+"?test=1"),d=await r.json();o.textContent=d.test==="passed"?"✅ Gemini answered. Model: "+d.model:d.keyPresent===false?"❌ GEMINI_API_KEY is missing in Netlify.":"❌ "+(d.detail||d.test||"Check failed")}catch(e){o.textContent="❌ Function not reachable."}};
+/* ---- selects ---- */
+["qs","rs"].forEach(function(id){AREAS.forEach(function(a){var o=document.createElement("option");o.textContent=a;$(id).appendChild(o)})});
+["qg","rg"].forEach(function(id){["7","8","9"].forEach(function(g){var o=document.createElement("option");o.value=g;o.textContent="Grade "+g;$(id).appendChild(o)})});
+function parse(t){t=String(t).replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();return JSON.parse(t)}
+/* ---- quiz ---- */
+var Q=[],qi=0,score=0,qctx="";
+$("qgo").onclick=async function(){var t=$("qt").value.trim(),m=$("qmsg");if(!t){m.textContent="Type a topic first.";return}
+var b=this;b.disabled=true;m.textContent="Making your quiz...";$("quizBox").innerHTML="";var s=$("qs").value,g=$("qg").value,n=$("qn").value,l=$("ql").value;
+try{var d=await call({mode:"json",message:"Create "+n+" multiple-choice questions for Kenyan Grade "+g+" CBC "+s+" on the topic: "+t+". Level: "+l+'. Each question has exactly 4 options. Return JSON: {"questions":[{"q":"text","options":["a","b","c","d"],"answer":0,"why":"one short sentence"}]} where answer is the index (0-3) of the correct option.'});
+var j=parse(d.reply).questions;Q=(j||[]).filter(function(x){return x&&x.q&&Array.isArray(x.options)&&x.options.length===4&&x.answer>=0&&x.answer<4});if(!Q.length)throw new Error("x");
+qi=0;score=0;qctx=s+" - "+t;m.textContent="";$("quizSetup").style.display="none";showQ()}catch(e){m.textContent=e.message&&e.message!=="x"&&!/JSON/.test(e.message)?e.message:"The quiz could not be made. Please try again."}b.disabled=false};
+function showQ(){var box=$("quizBox"),q=Q[qi];box.innerHTML="";var c=document.createElement("div");c.className="note";
+var h=document.createElement("div");h.innerHTML='<b>Question '+(qi+1)+' of '+Q.length+'</b><div class="bar"><span style="width:'+(qi/Q.length*100)+'%"></span></div>';c.appendChild(h);
+var p=document.createElement("p");p.style.fontWeight="700";p.textContent=q.q;c.appendChild(p);var fb=document.createElement("div"),done=false;
+q.options.forEach(function(o,i){var b=document.createElement("button");b.type="button";b.className="opt";b.textContent=String.fromCharCode(65+i)+". "+o;b.onclick=function(){if(done)return;done=true;var ok=i===q.answer;if(ok)score++;b.classList.add(ok?"good":"bad");if(!ok)c.querySelectorAll(".opt")[q.answer].classList.add("good");
+fb.innerHTML="";var w=document.createElement("p");w.textContent=(ok?"✅ Correct! ":"❌ Not quite. ")+(q.why||"");fb.appendChild(w);var nx=document.createElement("button");nx.type="button";nx.className="btn full";nx.textContent=qi+1<Q.length?"Next question":"See my score";nx.onclick=function(){qi++;qi<Q.length?showQ():end()};fb.appendChild(nx)};c.appendChild(b)});
+c.appendChild(fb);box.appendChild(c)}
+function end(){var box=$("quizBox");box.innerHTML="";var c=document.createElement("div");c.className="note";var p=Math.round(score/Q.length*100);
+c.innerHTML="<h2>🏁 You scored "+score+" / "+Q.length+" ("+p+"%)</h2><p>"+(p>=80?"Excellent work!":p>=50?"Good effort. Revise the ones you missed.":"Keep practising. You will improve.")+"</p>";
+var a=document.createElement("button");a.className="btn full";a.type="button";a.textContent="Explain this topic to me";a.onclick=function(){show("chat");chat.ask("I took a quiz on "+qctx+" and scored "+score+" out of "+Q.length+". Explain the key ideas I should revise.")};
+var r=document.createElement("button");r.className="btn secondary full";r.type="button";r.style.marginTop="8px";r.textContent="New quiz";r.onclick=function(){box.innerHTML="";$("quizSetup").style.display=""};c.appendChild(a);c.appendChild(r);box.appendChild(c)}
+/* ---- revise ---- */
+async function rev(kind,btn){var t=$("rt").value.trim(),m=$("rmsg");if(!t){m.textContent="Type a topic first.";return}
+var s=$("rs").value,g=$("rg").value,box=$("reviseBox");btn.disabled=true;m.textContent="Preparing...";box.innerHTML="";
+try{if(kind==="notes"){var d=await call({mode:"chat",message:"Write clear revision notes (about 350 words) for Kenyan Grade "+g+" CBC "+s+" on: "+t+". Use short headings, key points, one worked example and 3 quick practice questions at the end."});var n=document.createElement("div");n.className="note";n.innerHTML=fmt(d.reply);box.appendChild(n)}
+else{var d2=await call({mode:"json",message:"Make 8 flashcards for Kenyan Grade "+g+" CBC "+s+" on: "+t+'. Return JSON: {"cards":[{"front":"short question or term","back":"short answer"}]}'});var cs=(parse(d2.reply).cards||[]).filter(function(x){return x&&x.front&&x.back});if(!cs.length)throw new Error("x");cards(cs,box)}m.textContent=""}
+catch(e){m.textContent=e.message&&e.message!=="x"&&!/JSON/.test(e.message)?e.message:"That could not be made. Please try again."}btn.disabled=false}
+function cards(cs,box){var i=0,back=false,w=document.createElement("div"),f=document.createElement("div");f.className="flash";f.setAttribute("role","button");f.tabIndex=0;var inf=document.createElement("p");inf.className="small";
+function draw(){f.className="flash"+(back?" back":"");f.textContent=back?cs[i].back:cs[i].front;inf.textContent="Card "+(i+1)+" of "+cs.length+" • tap the card to flip"}
+f.onclick=function(){back=!back;draw()};f.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f.onclick()}};
+var nb=document.createElement("button");nb.className="btn full";nb.type="button";nb.textContent="Next card";nb.onclick=function(){i=(i+1)%cs.length;back=false;draw()};
+w.appendChild(f);w.appendChild(inf);w.appendChild(nb);box.appendChild(w);draw()}
+$("rnotes").onclick=function(){rev("notes",this)};$("rcards").onclick=function(){rev("cards",this)};
+})();
+</script></body></html>
