@@ -106,7 +106,7 @@ async function callGemini(key, model, contents, deadline, opts) {
         systemInstruction: { parts: [{ text: opts.json ? JSON_PROMPT : SYSTEM_PROMPT }] },
         contents,
         ...(opts.search ? { tools: [{ google_search: {} }] } : {}),
-        generationConfig: Object.assign({ temperature: opts.json ? 0.4 : 0.6, maxOutputTokens: opts.json ? 4096 : 2048 }, opts.json ? { responseMimeType: "application/json" } : {}),
+        generationConfig: Object.assign({ temperature: opts.json ? 0.4 : 0.6, maxOutputTokens: opts.json ? 4096 : 2048 }, opts.json ? { responseMimeType: "application/json" } : {}, /^gemini-2\.5-flash/.test(model) ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
       }),
       signal: controller.signal,
     });
